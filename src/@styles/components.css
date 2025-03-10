@@ -170,6 +170,7 @@ button {
 .stacked-cards {
   position: relative;
   margin-top: 50px;
+  width: 550px;
 }
 
 .stacked-cards .card {
@@ -178,6 +179,7 @@ button {
   opacity: 1;
   transform: scale(1);
   transition: all 0.3s ease;
+  width: 100%;
 }
 
 .stacked-cards .card:last-child {
@@ -211,6 +213,7 @@ button {
     margin-top: 16px;
   }
   .stacked-cards {
-    margin-top: 40px;
+    margin: 40px 5% 0;
+    width: 90%;
   }
 }
