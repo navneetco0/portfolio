@@ -1,0 +1,10 @@
+{
+  "name": "Navneet Kumar",
+  "designation": "Full-Stack Web Developer",
+  "social_links": [
+    { "name": "github", "link": "https://github.com/navneetco0" },
+    { "name": "linkedin", "link": "https://www.linkedin.com/in/navneetco0/" }
+  ],
+  "open_slots": 2,
+  "worked_with": ["Anmol", "helpee", "millat"]
+}

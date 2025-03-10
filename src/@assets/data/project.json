@@ -1,0 +1,19 @@
+{
+  "heading": ["My Work"],
+  "paragraph": ["Check out some of my favorite", "& most recent projects."],
+  "projects": [
+    {
+      "thumbnail": "",
+      "title": "",
+      "description": "",
+      "code_url": "",
+      "live_url": "",
+      "tags": [],
+      "date": "",
+      "client": "",
+      "images": [],
+      "videos": [],
+      "description_arrangement": ""
+    }
+  ]
+}
