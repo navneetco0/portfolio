@@ -1,77 +1,111 @@
 import React, { useEffect, useState } from "react";
 import { GoHome } from "react-icons/go";
 
-const Navbar = () => {
-  const [visible, setVisible] = useState(false);
-  const [activeLink, setActiveLink] = useState("#home");
+interface NavItem {
+  id: string;
+  label: string;
+  icon?: React.ReactNode;
+  ariaLabel: string;
+}
+const Navigation = () => {
+  const [isNavbarVisible, setIsNavbarVisible] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+
+  const navItems: NavItem[] = [
+    {
+      id: "home",
+      label: "Home",
+      icon: <GoHome size={20} aria-hidden="true" />,
+      ariaLabel: "Return to homepage",
+    },
+    {
+      id: "projects",
+      label: "Projects",
+      ariaLabel: "View projects section",
+    },
+    {
+      id: "journal",
+      label: "Journal",
+      ariaLabel: "Read journal articles",
+    },
+    {
+      id: "contact",
+      label: "Contact",
+      ariaLabel: "Navigate to contact section",
+    },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
-      requestAnimationFrame(() => {
-        setVisible(window.scrollY > 100);
+      const shouldBeVisible = window.scrollY > 100;
+      setIsNavbarVisible((prev) =>
+        prev !== shouldBeVisible ? shouldBeVisible : prev
+      );
+
+      // Update active section based on scroll position
+      const sections = navItems.map((item) => document.getElementById(item.id));
+      const visibleSection = sections.find((section) => {
+        if (!section) return false;
+        const rect = section.getBoundingClientRect();
+        return rect.top <= 100 && rect.bottom >= 100;
       });
+
+      if (visibleSection) {
+        setActiveSection(visibleSection.id);
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const optimizedScrollHandler = () => {
+      window.requestAnimationFrame(handleScroll);
+    };
+
+    window.addEventListener("scroll", optimizedScrollHandler, {
+      passive: true,
+    });
+    return () => window.removeEventListener("scroll", optimizedScrollHandler);
   }, []);
 
-  const handleLinkClick = (
-    section: string
-  ) => {
-    setActiveLink(section);
-    document.querySelector(section)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+  const handleNavigation = (sectionId: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    const section = document.getElementById(sectionId);
+    if (section) {
+      setActiveSection(sectionId);
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+
+      // Update URL without full page reload
+      window.history.replaceState(null, "", `#${sectionId}`);
+    }
   };
 
   return (
-    <nav className={`navbar ${visible ? "visible" : ""}`}>
-      <ul>
-        <li>
-          <a
-            href="#home"
-            className={activeLink === "#home" ? "active" : ""}
-            onClick={() => handleLinkClick("#home")}
-            aria-current={activeLink === "#home" ? "page" : undefined}
-          >
-            <GoHome size={20} />
-          </a>
-        </li>
-        <li>
-          <a
-            href="#projects"
-            className={activeLink === "#projects" ? "active" : ""}
-            onClick={() => handleLinkClick("#projects")}
-            aria-current={activeLink === "#projects" ? "page" : undefined}
-          >
-            Projects
-          </a>
-        </li>
-        <li>
-          <a
-            href="#journal"
-            className={activeLink === "#journal" ? "active" : ""}
-            onClick={() => handleLinkClick("#journal")}
-            aria-current={activeLink === "#journal" ? "page" : undefined}
-          >
-            Journal
-          </a>
-        </li>
-        <li>
-          <a
-            href="#contact"
-            className={activeLink === "#contact" ? "active" : ""}
-            onClick={() => handleLinkClick("#contact")}
-            aria-current={activeLink === "#contacts" ? "page" : undefined}
-          >
-            Contact
-          </a>
-        </li>
+    <nav
+      className={`navigation ${isNavbarVisible ? "visible" : ""}`}
+      aria-label="Main navigation"
+      role="navigation"
+    >
+      <ul className="nav-list">
+        {navItems.map(({ id, label, icon, ariaLabel }) => (
+          <li key={id} className="nav-item">
+            <a
+              href={`#${id}`}
+              onClick={handleNavigation(id)}
+              className={activeSection === id ? "active" : ""}
+              aria-label={ariaLabel}
+              aria-current={activeSection === id ? "page" : undefined}
+              role="link"
+              tabIndex={0}
+            >
+              {icon || label}
+              {icon && <span className="visually-hidden">{label}</span>}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
   );
 };
 
-export default Navbar;
+export default Navigation;
